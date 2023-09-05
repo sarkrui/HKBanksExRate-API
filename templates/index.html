@@ -9,9 +9,72 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" charset="utf8" >
         $(document).ready( function () {
-            $('#rateTable').DataTable();
+            $('#rateTable').DataTable({
+                "bFilter": false     
+                "lengthChange":false           
+            });
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+        const rates = {{ rates | tojson }};
+        let currentInput = "";
+        let currentBank = rates[0]['Bank']; // Default to the first bank
+        
+        // Fill bank options
+        for (let i = 0; i < rates.length; i++) {
+            $('#bankSelect').append(new Option(rates[i]['Bank'], rates[i]['Bank']));
+        }
+
+        $('#bankSelect').on('change', function() {
+            currentBank = this.value;
+            $(currentInput).trigger("input"); // Trigger recalculation
+        });
+
+        function calculate() {
+            let val = parseFloat($(currentInput).val());
+            let hkdRate, usdRate;
+
+            // Loop through the rates array to find the matching bank rates
+            for (let i = 0; i < rates.length; i++) {
+                if (rates[i]['Bank'] === currentBank) {
+                    hkdRate = rates[i]['BuyHKD'];
+                    usdRate = rates[i]['BuyUSD'];
+                    break;
+                }
+            }
+
+            if (!hkdRate || !usdRate) {
+                console.error("Could not find rates for the selected bank.");
+                return;
+            }
+
+            if (currentInput === "#cny") {
+                let hkd = val / hkdRate;
+                let usd = val / usdRate;
+                $("#hkd").val(hkd.toFixed(2));
+                $("#usd").val(usd.toFixed(2));
+            } else if (currentInput === "#hkd") {
+                let cny = val * hkdRate;
+                let usd = val / usdRate;
+                $("#cny").val(cny.toFixed(2));
+                $("#usd").val(usd.toFixed(2));
+            } else if (currentInput === "#usd") {
+                let cny = val * usdRate * hkdRate;
+                let hkd = val * usdRate;
+                $("#cny").val(cny.toFixed(2));
+                $("#hkd").val(hkd.toFixed(2));
+            }
+        }
+
+
+        $("#cny, #hkd, #usd").on("focus", function() {
+            currentInput = "#" + this.id;
+        }).on("input", calculate);
+        });
+    </script>
+  
     <style>
         @media (max-width: 390px) {
             .table-responsive {
@@ -23,7 +86,20 @@
 <body>
 
     <div class="container mt-5">
-        
+        <div class="mt-5">
+            <h3>Exchange Rate Calculator</h3>
+            <label for="bankSelect">Choose a bank:</label>
+            <select id="bankSelect">
+              <!-- Options filled by JS -->
+            </select>
+            <label for="cny">CNY:</label>
+            <input type="number" id="cny">
+            <label for="hkd">HKD:</label>
+            <input type="number" id="hkd">
+            <label for="usd">USD:</label>
+            <input type="number" id="usd">
+        </div>
+
         <table id="rateTable" class="table table-striped table-responsive">
             <thead>
                 <tr>

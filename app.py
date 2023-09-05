@@ -128,14 +128,14 @@ def index():
     CMBWL_BuyHKD, CMBWL_BuyUSD = getCMBWLRate()
     BOCHK_BuyHKD, BOCHK_BuyUSD = getBOCHKRate()
     HKBEA_BuyHKD, HKBEA_BuyUSD = getHKBEARate()
-    ICBASIA_BuyHKD, ICBASIA_BuyUSD = getICBCAISARate()
+    ICBCASIA_BuyHKD, ICBCASIA_BuyUSD = getICBCAISARate()
     
     rates = [
         {'Bank': 'HSBC(HK)', 'BuyUSD': HSBCHK_BuyUSD, 'BuyHKD': HSBCHK_BuyHKD},
         {'Bank': 'CMB (WL)', 'BuyUSD': CMBWL_BuyUSD, 'BuyHKD': CMBWL_BuyHKD},
         {'Bank': 'BOC (HK)', 'BuyUSD': BOCHK_BuyUSD, 'BuyHKD': BOCHK_BuyHKD},
         {'Bank': 'BEA (HK)', 'BuyUSD': HKBEA_BuyUSD, 'BuyHKD': HKBEA_BuyHKD},
-        {'Bank': 'ICBC (ASIA)', 'BuyUSD': ICBASIA_BuyUSD, 'BuyHKD': ICBASIA_BuyHKD}
+        {'Bank': 'ICBC (ASIA)', 'BuyUSD': ICBCASIA_BuyUSD, 'BuyHKD': ICBCASIA_BuyHKD}
     ]
     
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -148,14 +148,14 @@ def raw_data():
     CMBWL_BuyHKD, CMBWL_BuyUSD = getCMBWLRate()
     BOCHK_BuyHKD, BOCHK_BuyUSD = getBOCHKRate()
     HKBEA_BuyHKD, HKBEA_BuyUSD = getHKBEARate()
-    ICBASIA_BuyHKD, ICBASIA_BuyUSD = getICBCAISARate()
+    ICBCASIA_BuyHKD, ICBCASIA_BuyUSD = getICBCAISARate()
 
     rates = {
         'HSBCHK': {'BuyUSD': HSBCHK_BuyUSD, 'BuyHKD': HSBCHK_BuyHKD},
         'CMBWL': {'BuyUSD': CMBWL_BuyUSD, 'BuyHKD': CMBWL_BuyHKD},
         'BOCHK': {'BuyUSD': BOCHK_BuyUSD, 'BuyHKD': BOCHK_BuyHKD},
         'BEAHK': {'BuyUSD': HKBEA_BuyUSD, 'BuyHKD': HKBEA_BuyHKD},
-        'ICBASIA': {'BuyUSD': ICBASIA_BuyUSD, 'BuyHKD': ICBASIA_BuyHKD}
+        'ICBCASIA': {'BuyUSD': ICBCASIA_BuyUSD, 'BuyHKD': ICBCASIA_BuyHKD}
     }
     
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
