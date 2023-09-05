@@ -18,13 +18,12 @@ This application displays currency exchange rates (RMB-HKD, and HKD-USD only) fe
 1. Install Gunicorn
 
    ```bash
-   pip install gunicorn
+   pip install gunicorn 
    ```
 
 2. Run the following command to start the Gunicorn server:
 
    ```bash
-   bashCopy code
    gunicorn --bind 0.0.0.0:8000 app:app -w 4
    ```
 

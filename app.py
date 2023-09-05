@@ -142,10 +142,6 @@ def index():
     
     return render_template('index.html', rates=rates, current_time=current_time)
 
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
-
 @app.route('/raw')
 def raw_data():
     HSBCHK_BuyUSD, HSBCHK_BuyHKD = getHSBCRate()
@@ -165,3 +161,6 @@ def raw_data():
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     return jsonify({'rates': rates, 'last_updated': current_time})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000)
