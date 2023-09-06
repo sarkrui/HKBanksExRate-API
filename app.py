@@ -122,6 +122,47 @@ def getICBCAISARate():
 
     return ICBCASIA_BuyHKD, ICBCASIA_BuyUSD
 
+def getWISERate():
+    url = "https://wise.com/gateway/v1/price"
+    headers = {
+        'authority': 'wise.com',
+        'accept': 'application/json, text/plain, */*',
+        'accept-language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,zh-TW;q=0.6',
+        'cache-control': 'no-cache',
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
+    }
+    HKD_USD = {
+        'sourceAmount': '10000',
+        'sourceCurrency': 'HKD',
+        'targetCurrency': 'USD',
+        'profileId': '42039306',
+        'profileCountry': 'US',
+        'profileType': 'PERSONAL',
+        'markers': 'FCF_PRICING'
+    }
+    CNY_HKD = {
+        'sourceAmount': '10000',
+        'sourceCurrency': 'CNY',
+        'targetCurrency': 'HKD',
+        'profileId': '42039306',
+        'profileType': 'PERSONAL'
+    }
+    
+    HKD_USD_response = requests.get(url, headers=headers, params=HKD_USD)
+    CNY_HKD_response = requests.get(url, headers=headers, params=CNY_HKD)
+    if HKD_USD_response.status_code == 200 and CNY_HKD_response.status_code == 200:
+        data = json.loads(CNY_HKD_response.text and HKD_USD_response.text)
+        for entry in data:
+            if entry['payInMethod'] == "RECEIVE_BANK_TRANSFER" and entry['payOutMethod'] == "BANK_TRANSFER":
+                WISE_BuyUSD = round(1 / float(entry['targetAmount']) * 10000, 4)
+
+    if CNY_HKD_response.status_code == 200 and CNY_HKD_response.status_code == 200:
+        data = json.loads(CNY_HKD_response.text and CNY_HKD_response.text)
+        for entry in data:
+            if entry['payInMethod'] == "BANK_TRANSFER" and entry['payOutMethod'] == "BANK_TRANSFER":
+                WISE_BuyHKD = round((1 / float(entry['targetAmount'])) * 10000, 4)
+    return WISE_BuyHKD, WISE_BuyUSD
+
 @app.route('/')
 def index():
     HSBCHK_BuyUSD, HSBCHK_BuyHKD = getHSBCRate()
@@ -129,13 +170,15 @@ def index():
     BOCHK_BuyHKD, BOCHK_BuyUSD = getBOCHKRate()
     HKBEA_BuyHKD, HKBEA_BuyUSD = getHKBEARate()
     ICBCASIA_BuyHKD, ICBCASIA_BuyUSD = getICBCAISARate()
+    WISE_BuyHKD, WISE_BuyUSD = getWISERate()
     
     rates = [
         {'Bank': 'HSBC(HK)', 'BuyUSD': HSBCHK_BuyUSD, 'BuyHKD': HSBCHK_BuyHKD},
         {'Bank': 'CMB (WL)', 'BuyUSD': CMBWL_BuyUSD, 'BuyHKD': CMBWL_BuyHKD},
         {'Bank': 'BOC (HK)', 'BuyUSD': BOCHK_BuyUSD, 'BuyHKD': BOCHK_BuyHKD},
         {'Bank': 'BEA (HK)', 'BuyUSD': HKBEA_BuyUSD, 'BuyHKD': HKBEA_BuyHKD},
-        {'Bank': 'ICBC (ASIA)', 'BuyUSD': ICBCASIA_BuyUSD, 'BuyHKD': ICBCASIA_BuyHKD}
+        {'Bank': 'ICBC (ASIA)', 'BuyUSD': ICBCASIA_BuyUSD, 'BuyHKD': ICBCASIA_BuyHKD},
+        {'Bank': 'WISE (HK)', 'BuyUSD': WISE_BuyUSD, 'BuyHKD': WISE_BuyHKD}
     ]
     
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -149,13 +192,15 @@ def raw_data():
     BOCHK_BuyHKD, BOCHK_BuyUSD = getBOCHKRate()
     HKBEA_BuyHKD, HKBEA_BuyUSD = getHKBEARate()
     ICBCASIA_BuyHKD, ICBCASIA_BuyUSD = getICBCAISARate()
+    WISE_BuyHKD, WISE_BuyUSD = getWISERate()
 
     rates = {
         'HSBCHK': {'BuyUSD': HSBCHK_BuyUSD, 'BuyHKD': HSBCHK_BuyHKD},
         'CMBWL': {'BuyUSD': CMBWL_BuyUSD, 'BuyHKD': CMBWL_BuyHKD},
         'BOCHK': {'BuyUSD': BOCHK_BuyUSD, 'BuyHKD': BOCHK_BuyHKD},
         'BEAHK': {'BuyUSD': HKBEA_BuyUSD, 'BuyHKD': HKBEA_BuyHKD},
-        'ICBCASIA': {'BuyUSD': ICBCASIA_BuyUSD, 'BuyHKD': ICBCASIA_BuyHKD}
+        'ICBCASIA': {'BuyUSD': ICBCASIA_BuyUSD, 'BuyHKD': ICBCASIA_BuyHKD},
+        'WISE (HK)': {'BuyUSD': WISE_BuyUSD, 'BuyHKD': WISE_BuyHKD}
     }
     
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
